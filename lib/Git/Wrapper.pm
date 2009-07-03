@@ -266,7 +266,7 @@ argument passing, instead of CLI-style C<--options> as L<Git> does.
 =head1 METHODS
 
 Except as documented, every git subcommand is available as a method on a
-Git::Wrapper object.
+Git::Wrapper object.  Replace any hyphens in the git command with underscores.
 
 The first argument should be a hashref containing options and their values.
 Boolean options are either true (included) or false (excluded).  The remaining
