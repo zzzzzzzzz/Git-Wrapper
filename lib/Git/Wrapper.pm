@@ -98,6 +98,7 @@ sub log {
   my $self = shift;
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
   $opt->{no_color} = 1;
+  $opt->{pretty}   = 'medium';
   my @out = $self->_cmd(log => $opt, @_);
 
   my @logs;
