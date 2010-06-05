@@ -43,8 +43,10 @@ eval { $git->moo }; # very unlikely to exist, help.autocorrect guesses 'log'
 if (my $e = $@) {   # autocorrect is off
   if ($git->version lt '1.6') {
     like($e, qr/which does not exist/);
-  } else {
+  } elsif ($git->version lt '1.7') {
     like($e, qr/is not a git-command/);
+  } else {
+    like($e, qr/is not a git command/);
   }
 }
 
