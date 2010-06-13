@@ -251,6 +251,15 @@ of C<Git::Wrapper::Log> objects.  They have four methods:
 
 =back
 
+=head1 COMPATIBILITY
+
+On Win32 Git::Wrapper is incompatible with msysGit installations earlier than
+Git-1.7.1-preview20100612 due to a bug involving the return value of a git
+command in cmd/git.cmd.  If you use the msysGit version distributed with
+GitExtensions or an earlier version of msysGit, tests will fail during
+installation of this module.  You can get the latest version of msysGit on the
+Google Code project page: L<http://code.google.com/p/msysgit/downloads>
+
 =head1 SEE ALSO
 
 L<VCI::VCS::Git> is the git implementation for L<VCI>, a generic interface to
