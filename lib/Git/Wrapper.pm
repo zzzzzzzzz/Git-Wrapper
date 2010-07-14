@@ -3,7 +3,7 @@ use warnings;
 
 package Git::Wrapper;
 
-our $VERSION = '0.010';
+our $VERSION = '0.011';
 use IPC::Open3 () ;
 use Symbol;
 use File::pushd;
@@ -457,6 +457,9 @@ Git itself is at L<http://git.or.cz>.
 =head1 AUTHOR
 
 Hans Dieter Pearcey, C<< <hdp@cpan.org> >>
+Chris Prather, C<< <chris@prather.org> >>
+
+Other Authors as listed in Changes.
 
 =head1 BUGS
 
@@ -467,7 +470,7 @@ notified of progress on your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2008 Hans Dieter Pearcey, All Rights Reserved.
+Copyright 2008 Hans Dieter Pearcey, Some Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
