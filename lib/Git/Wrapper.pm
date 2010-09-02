@@ -239,7 +239,7 @@ sub mode { $modes{ shift->{mode} } }
 
 sub from { shift->{from} }
 
-sub to   { shift->{to} // '' }
+sub to   { defined( $_[0]->{to} ) ? $_[0]->{to} : '' }
 
 __END__
 
