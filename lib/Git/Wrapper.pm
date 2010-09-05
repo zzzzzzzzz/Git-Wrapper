@@ -1,9 +1,11 @@
+use 5.006;
 use strict;
 use warnings;
 
 package Git::Wrapper;
 
 our $VERSION = '0.011';
+our $DEBUG=0;
 use IPC::Open3 () ;
 use Symbol;
 use File::pushd;
@@ -59,6 +61,7 @@ sub _cmd {
     my $d = pushd $self->dir;
     my ($wtr, $rdr, $err);
     $err = Symbol::gensym;
+    print STDERR join(' ',@cmd),"\n" if $DEBUG;
     my $pid = IPC::Open3::open3($wtr, $rdr, $err, @cmd);
     close $wtr;
     chomp(@out = <$rdr>);
