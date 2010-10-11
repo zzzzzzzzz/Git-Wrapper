@@ -115,7 +115,11 @@ sub log {
     }
     die "no blank line separating head from message" if $line;
     my $message = '';
-    while (@out and length($line = shift @out)) {
+    while (
+      @out 
+      and $out[0] !~ /^commit (\S+)/ 
+      and length($line = shift @out)
+    ) {
       $line =~ s/^\s+//;
       $message .= "$line\n";
     }
