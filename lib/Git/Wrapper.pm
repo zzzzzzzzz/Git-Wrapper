@@ -105,21 +105,19 @@ sub log {
   my @out = $self->_cmd(log => $opt, @_);
 
   my @logs;
-  while (@out) {
-    local $_ = shift @out;
-    die "unhandled: $_" unless /^commit (\S+)/;
+  while (my $line = shift @out) {
+    die "unhandled: $line" unless $line =~ /^commit (\S+)/;
     my $current = Git::Wrapper::Log->new($1);
-    $_ = shift @out;
-
-    while (/^(\S+):\s+(.+)$/) {
+    $line = shift @out; # next line;
+    while ($line =~ /^(\S+):\s+(.+)$/) {
       $current->attr->{lc $1} = $2;
-      $_ = shift @out;
+      $line = shift @out; # next line;
     }
-    die "no blank line separating head from message" if $_;
+    die "no blank line separating head from message" if $line;
     my $message = '';
-    while (@out and length($_ = shift @out)) {
-      s/^\s+//;
-      $message .= "$_\n";
+    while (@out and length($line = shift @out)) {
+      $line =~ s/^\s+//;
+      $message .= "$line\n";
     }
     $current->message($message);
     push @logs, $current;
