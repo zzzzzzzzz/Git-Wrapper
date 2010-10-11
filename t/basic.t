@@ -48,11 +48,21 @@ my $log_date = $log->date;
 $log_date =~ s/ [+-]\d+$//;
 cmp_ok(( $log_date - $time ), '<=', 5, 'date');
 
-# Test empty commit message
-IO::File->new(">" . File::Spec->catfile($dir, qw(second_commit)))->print("second_commit\n");
-$git->add('second_commit');
-$git->commit({ message => "", 'allow-empty-message' => 1 });
-@log = $git->log();
-is(@log, 2, 'two log entries, one with empty commit message');
+SKIP: {
+    # Test empty commit message
+    IO::File->new(">" . File::Spec->catfile($dir, qw(second_commit)))->print("second_commit\n");
+    $git->add('second_commit');
+    eval {
+      $git->commit({ message => "", 'allow-empty-message' => 1 });
+    };
+
+    if ( $@ ){
+      skip substr($@,0,50), 1;
+    }
+
+    @log = $git->log();
+    is(@log, 2, 'two log entries, one with empty commit message');
+};
+
 
 done_testing();
