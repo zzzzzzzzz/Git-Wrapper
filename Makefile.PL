@@ -11,6 +11,6 @@ requires 'File::pushd';
 
 requires_external_bin 'git';
 
-auto_set_repository;
-auto_manifest;
+auto_set_repository # Module::Install::Repository;
+auto_manifest  # Module::Install::AutoManifest;
 WriteAll;
