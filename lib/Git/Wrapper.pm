@@ -208,6 +208,12 @@ sub get {
   return @{ defined $self->{$type} ? $self->{$type} : [] };
 }
 
+sub is_dirty {
+  my( $self ) = @_;
+
+  return keys %$self ? 1 : 0;
+}
+
 1;
 
 package Git::Wrapper::Status;
@@ -339,7 +345,15 @@ of C<Git::Wrapper::Log> objects.  They have four methods:
 
   my $statuses = $git->status;
 
-This returns an instance of Git::Wrapper:Statuses which has one public method:
+This returns an instance of Git::Wrapper:Statuses which has two public
+methods. First, C<is_dirty>:
+
+  my $dirty_flag = $statuses->is_dirty;
+
+Which returns a true/false value depending on whether the repository has any
+uncommitted changes.
+
+Second, C<get>:
 
   my @status = $statuses->get($group)
 

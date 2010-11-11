@@ -1,5 +1,9 @@
 Revision history for Git-Wrapper
 
+0.014   2010-11-12
+
+        Add 'is_dirty' helper to Statuses (John SJ Anderson)
+
 0.013   2010-09-06
 
         Added missing dependency for Test::Deep
