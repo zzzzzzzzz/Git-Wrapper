@@ -31,8 +31,12 @@ is_deeply(
   [ 'foo/bar' ],
 );
 
+is( $git->status->is_dirty , 1 , 'repo is dirty' );
+
 my $time = time;
 $git->commit({ message => "FIRST" });
+
+is( $git->status->is_dirty , 0 , 'repo is clean' );
 
 my @rev_list =
   $git->rev_list({ all => 1, pretty => 'oneline' });
