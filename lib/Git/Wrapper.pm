@@ -24,7 +24,7 @@ my $GIT = 'git';
 sub _opt {
   my $name = shift;
   $name =~ tr/_/-/;
-  return length($name) == 1 
+  return length($name) == 1
     ? "-$name"
     : "--$name"
   ;
@@ -52,11 +52,11 @@ sub _cmd {
     push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
   }
   push @cmd, @_;
-    
+
   #print "running [@cmd]\n";
   my @out;
   my @err;
-  
+
   {
     my $d = pushd $self->dir;
     my ($wtr, $rdr, $err);
@@ -76,7 +76,7 @@ sub _cmd {
       status => $? >> 8,
     );
   }
-    
+
   chomp(@out);
   return @out;
 }
@@ -167,12 +167,12 @@ use overload (
 );
 
 sub output { join "", map { "$_\n" } @{ shift->{output} } }
-sub error  { join "", map { "$_\n" } @{ shift->{error} } } 
+sub error  { join "", map { "$_\n" } @{ shift->{error} } }
 sub status { shift->{status} }
 
 package Git::Wrapper::Log;
 
-sub new { 
+sub new {
   my ($class, $id, %arg) = @_;
   return bless {
     id => $id,
