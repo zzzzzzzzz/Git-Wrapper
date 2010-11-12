@@ -3,8 +3,8 @@ use strict;
 use warnings;
 
 package Git::Wrapper;
+#ABSTRACT: wrap git(7) command-line interface
 
-our $VERSION = '0.013';
 our $DEBUG=0;
 use IPC::Open3 () ;
 use Symbol;
@@ -24,7 +24,7 @@ my $GIT = 'git';
 sub _opt {
   my $name = shift;
   $name =~ tr/_/-/;
-  return length($name) == 1 
+  return length($name) == 1
     ? "-$name"
     : "--$name"
   ;
@@ -52,11 +52,11 @@ sub _cmd {
     push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
   }
   push @cmd, @_;
-    
+
   #print "running [@cmd]\n";
   my @out;
   my @err;
-  
+
   {
     my $d = pushd $self->dir;
     my ($wtr, $rdr, $err);
@@ -76,7 +76,7 @@ sub _cmd {
       status => $? >> 8,
     );
   }
-    
+
   chomp(@out);
   return @out;
 }
@@ -169,12 +169,12 @@ use overload (
 );
 
 sub output { join "", map { "$_\n" } @{ shift->{output} } }
-sub error  { join "", map { "$_\n" } @{ shift->{error} } } 
+sub error  { join "", map { "$_\n" } @{ shift->{error} } }
 sub status { shift->{status} }
 
 package Git::Wrapper::Log;
 
-sub new { 
+sub new {
   my ($class, $id, %arg) = @_;
   return bless {
     id => $id,
@@ -208,6 +208,12 @@ sub add {
 sub get {
   my ($self, $type) = @_;
   return @{ defined $self->{$type} ? $self->{$type} : [] };
+}
+
+sub is_dirty {
+  my( $self ) = @_;
+
+  return keys %$self ? 1 : 0;
 }
 
 1;
@@ -247,14 +253,6 @@ sub from { shift->{from} }
 sub to   { defined( $_[0]->{to} ) ? $_[0]->{to} : '' }
 
 __END__
-
-=head1 NAME
-
-Git::Wrapper - wrap git(7) command-line interface
-
-=head1 VERSION
-
-  Version 0.010
 
 =head1 SYNOPSIS
 
@@ -341,7 +339,15 @@ of C<Git::Wrapper::Log> objects.  They have four methods:
 
   my $statuses = $git->status;
 
-This returns an instance of Git::Wrapper:Statuses which has one public method:
+This returns an instance of Git::Wrapper:Statuses which has two public
+methods. First, C<is_dirty>:
+
+  my $dirty_flag = $statuses->is_dirty;
+
+Which returns a true/false value depending on whether the repository has any
+uncommitted changes.
+
+Second, C<get>:
 
   my @status = $statuses->get($group)
 
@@ -459,25 +465,11 @@ version-controle systems.
 
 Git itself is at L<http://git.or.cz>.
 
-=head1 AUTHOR
-
-Hans Dieter Pearcey, C<< <hdp@cpan.org> >>
-Chris Prather, C<< <chris@prather.org> >>
-
-Other Authors as listed in Changes.
-
 =head1 BUGS
 
 Please report any bugs or feature requests to
 C<bug-git-wrapper@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.  I will be notified, and then you'll automatically be
 notified of progress on your bug as I make changes.
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008 Hans Dieter Pearcey, Some Rights Reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
