@@ -3,8 +3,8 @@ use strict;
 use warnings;
 
 package Git::Wrapper;
+#ABSTRACT: wrap git(7) command-line interface
 
-our $VERSION = '0.013';
 our $DEBUG=0;
 use IPC::Open3 () ;
 use Symbol;
@@ -252,14 +252,6 @@ sub to   { defined( $_[0]->{to} ) ? $_[0]->{to} : '' }
 
 __END__
 
-=head1 NAME
-
-Git::Wrapper - wrap git(7) command-line interface
-
-=head1 VERSION
-
-  Version 0.010
-
 =head1 SYNOPSIS
 
   my $git = Git::Wrapper->new('/var/foo');
@@ -471,25 +463,11 @@ version-controle systems.
 
 Git itself is at L<http://git.or.cz>.
 
-=head1 AUTHOR
-
-Hans Dieter Pearcey, C<< <hdp@cpan.org> >>
-Chris Prather, C<< <chris@prather.org> >>
-
-Other Authors as listed in Changes.
-
 =head1 BUGS
 
 Please report any bugs or feature requests to
 C<bug-git-wrapper@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.  I will be notified, and then you'll automatically be
 notified of progress on your bug as I make changes.
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008 Hans Dieter Pearcey, Some Rights Reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
