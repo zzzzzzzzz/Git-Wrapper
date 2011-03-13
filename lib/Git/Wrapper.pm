@@ -58,7 +58,7 @@ sub _cmd {
   my @err;
 
   {
-    my $d = pushd $self->dir;
+    my $d = pushd $self->dir unless $cmd eq 'clone';
     my ($wtr, $rdr, $err);
     $err = Symbol::gensym;
     print STDERR join(' ',@cmd),"\n" if $DEBUG;
