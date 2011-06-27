@@ -78,7 +78,10 @@ sub _cmd {
   }
 
   chomp(@out);
-  return @out;
+  return Git::Wrapper::Output->new(
+    output => \@out ,
+    error  => \@err ,
+  );
 }
 
 sub AUTOLOAD {
