@@ -114,13 +114,14 @@ sub log {
       $line = shift @out; # next line;
     }
     die "no blank line separating head from message" if $line;
+    my ( $initial_indent ) = $out[0] =~ /^(\s*)/ if @out;
     my $message = '';
     while (
       @out 
       and $out[0] !~ /^commit (\S+)/ 
       and length($line = shift @out)
     ) {
-      $line =~ s/^\s+//;
+      $line =~ s/^$initial_indent//; # strip just the indenting added by git
       $message .= "$line\n";
     }
     $current->message($message);

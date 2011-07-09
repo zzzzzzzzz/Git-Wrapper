@@ -3,7 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
 
         Added a fix that allows the 'clone' command to work (John SJ Anderson)
-
+        Change 'log' indentation stripping behavior (RT#56427, Mark Grimes)
 
 0.014   2010-11-12
 
