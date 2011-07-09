@@ -1,6 +1,11 @@
-Revision history for Git-Wrapper
+Revision history for {{$dist->name}}
 
-0.014   
+{{$NEXT}}
+
+        Added a fix that allows the 'clone' command to work (John SJ Anderson)
+
+
+0.014   2010-11-12
 
         Added empty commit message handling (Robert Bohne)
         Fixed failed tests on slow smokers. (Robert Bohne)
