@@ -10,6 +10,13 @@ use File::Path qw(mkpath);
 use POSIX qw(strftime);
 use Test::Deep;
 
+unless ( Git::Wrapper->has_git_in_path ) {
+  diag 'EXITING TESTS due to lack of installed git in $PATH.';
+  SKIP: {skip 'no git in $PATH',1;}
+  done_testing();
+  exit();
+}
+
 my $dir = tempdir(CLEANUP => 1);
 
 my $git = Git::Wrapper->new($dir);

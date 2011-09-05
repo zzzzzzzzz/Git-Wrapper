@@ -6,6 +6,7 @@ package Git::Wrapper;
 #ABSTRACT: wrap git(7) command-line interface
 
 our $DEBUG=0;
+use IPC::Cmd   qw(can_run);
 use IPC::Open3 () ;
 use Symbol;
 use File::pushd;
@@ -17,6 +18,8 @@ sub new {
   die "usage: $class->new(\$dir)" unless $self->dir;
   return $self;
 }
+
+sub has_git_in_path { can_run('git') }
 
 sub dir { shift->{dir} }
 
@@ -355,6 +358,11 @@ of C<Git::Wrapper::Log> objects.  They have four methods:
 =item * message
 
 =back
+
+=head2 has_git_in_path
+
+This method returns a true or false value indicating if there is a 'git'
+binary in the current $PATH.
 
 =head2 status
 
