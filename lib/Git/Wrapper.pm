@@ -163,10 +163,22 @@ sub supports_log_raw_dates {
   return 1;
 }
 
+sub supports_status_porcelain {
+  my $self = shift;
+
+  # The '--porcelain' option to git status was added in version 1.7.0
+  return 0 if ( versioncmp( $self->version , '1.7' ) eq -1 );
+  return 1;
+}
+
 my %STATUS_CONFLICTS = map { $_ => 1 } qw<DD AU UD UA DU AA UU>;
 
 sub status {
   my $self = shift;
+
+  return $self->_cmd('status' , @_ )
+    unless $self->supports_status_porcelain;
+
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
   $opt->{$_} = 1 for qw<porcelain>;
   my @out = $self->_cmd(status => $opt, @_);
@@ -373,6 +385,8 @@ of C<Git::Wrapper::Log> objects.  They have four methods:
 This method returns a true or false value indicating if there is a 'git'
 binary in the current $PATH.
 
+=head2 supports_status_porcelain
+
 =head2 supports_log_raw_dates
 
 These methods return a true or false value (1 or 0) indicating whether the git
@@ -385,10 +399,17 @@ versions of the underlying git binary.
 
 =head2 status
 
+When running with an underlying git binary that returns false for the
+L</supports_status_porcelain> method, this method will act like any other
+wrapped command: it will return output as an array of chomped lines.
+
+When running with an underlying git binary that returns true for the
+L</supports_status_porcelain> method, this method instead returns an
+instance of Git::Wrapper::Statuses:
+
   my $statuses = $git->status;
 
-This returns an instance of Git::Wrapper:Statuses which has two public
-methods. First, C<is_dirty>:
+Git::Wrapper:Statuses has two public methods. First, C<is_dirty>:
 
   my $dirty_flag = $statuses->is_dirty;
 

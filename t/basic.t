@@ -40,12 +40,20 @@ is_deeply(
   [ 'foo/bar' ],
 );
 
-is( $git->status->is_dirty , 1 , 'repo is dirty' );
+SKIP: {
+  skip 'testing old git without porcelain' , 1 unless $git->supports_status_porcelain;
+
+  is( $git->status->is_dirty , 1 , 'repo is dirty' );
+}
 
 my $time = time;
 $git->commit({ message => "FIRST\n\n\tBODY\n" });
 
-is( $git->status->is_dirty , 0 , 'repo is clean' );
+SKIP: {
+  skip 'testing old git without porcelain' , 1 unless $git->supports_status_porcelain;
+
+  is( $git->status->is_dirty , 0 , 'repo is clean' );
+}
 
 my @rev_list =
   $git->rev_list({ all => 1, pretty => 'oneline' });
