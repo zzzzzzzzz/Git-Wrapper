@@ -6,25 +6,29 @@ package Git::Wrapper;
 #ABSTRACT: wrap git(7) command-line interface
 
 our $DEBUG=0;
-use IPC::Cmd   qw(can_run);
-use IPC::Open3 () ;
-use Symbol;
+
 use File::pushd;
 use File::Temp;
+use IPC::Cmd        qw(can_run);
+use IPC::Open3      qw();
 use Sort::Versions;
+use Symbol;
+
+my $GIT = $ENV{GIT_WRAPPER_GIT} // 'git';
 
 sub new {
   my ($class, $arg, %opt) = @_;
+
   my $self = bless { dir => $arg, %opt } => $class;
+
   die "usage: $class->new(\$dir)" unless $self->dir;
+
   return $self;
 }
 
 sub has_git_in_path { can_run('git') }
 
 sub dir { shift->{dir} }
-
-my $GIT = $ENV{GIT_WRAPPER_GIT} // 'git';
 
 sub _opt {
   my $name = shift;
@@ -46,35 +50,50 @@ sub _cmd {
 
   for (grep { /^-/ } keys %$opt) {
     (my $name = $_) =~ s/^-//;
+
     my $val = delete $opt->{$_};
     next if $val eq '0';
+
     push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
   }
+
   push @cmd, $cmd;
+
   for my $name (keys %$opt) {
     my $val = delete $opt->{$name};
     next if $val eq '0';
-    ( $name, $val ) = $self->_message_tempfile( $val ) if $self->_win32_multiline_commit_msg( $cmd, $name, $val );
+
+    ( $name, $val ) = $self->_message_tempfile( $val )
+      if $self->_win32_multiline_commit_msg( $cmd, $name, $val );
+
     push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
   }
+
   push @cmd, @_;
 
   #print "running [@cmd]\n";
-  my @out;
-  my @err;
+  my( @out , @err );
 
   {
     my $d = pushd $self->dir unless $cmd eq 'clone';
+
     my ($wtr, $rdr, $err);
+
     $err = Symbol::gensym;
+
     print STDERR join(' ',@cmd),"\n" if $DEBUG;
+
     my $pid = IPC::Open3::open3($wtr, $rdr, $err, @cmd);
+
     close $wtr;
     chomp(@out = <$rdr>);
     chomp(@err = <$err>);
+
     waitpid $pid, 0;
   };
+
   #print "status: $?\n";
+
   if ($?) {
     die Git::Wrapper::Exception->new(
       output => \@out,
@@ -100,15 +119,19 @@ sub _win32_multiline_commit_msg {
 
 sub _message_tempfile {
   my ( $self, $message ) = @_;
+
   my $tmp = File::Temp->new( UNLINK => 0 );
   $tmp->print( $message );
+
   return ( "file", '"'.$tmp->filename.'"' );
 }
 
 sub AUTOLOAD {
   my $self = shift;
+
   (my $meth = our $AUTOLOAD) =~ s/.+:://;
   return if $meth eq 'DESTROY';
+
   $meth =~ tr/_/-/;
 
   return $self->_cmd($meth, @_);
@@ -116,39 +139,52 @@ sub AUTOLOAD {
 
 sub version {
   my $self = shift;
+
   my ($version) = $self->_cmd('version');
+
   $version =~ s/^git version //;
+
   return $version;
 }
 
 sub log {
   my $self = shift;
+
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
   $opt->{no_color} = 1;
   $opt->{pretty}   = 'medium';
+
   my @out = $self->_cmd(log => $opt, @_);
 
   my @logs;
   while (my $line = shift @out) {
     die "unhandled: $line" unless $line =~ /^commit (\S+)/;
+
     my $current = Git::Wrapper::Log->new($1);
+
     $line = shift @out; # next line;
+
     while ($line =~ /^(\S+):\s+(.+)$/) {
       $current->attr->{lc $1} = $2;
       $line = shift @out; # next line;
     }
+
     die "no blank line separating head from message" if $line;
+
     my ( $initial_indent ) = $out[0] =~ /^(\s*)/ if @out;
+
     my $message = '';
     while (
-      @out 
-      and $out[0] !~ /^commit (\S+)/ 
+      @out
+      and $out[0] !~ /^commit (\S+)/
       and length($line = shift @out)
     ) {
       $line =~ s/^$initial_indent//; # strip just the indenting added by git
       $message .= "$line\n";
     }
+
     $current->message($message);
+
     push @logs, $current;
   }
 
@@ -181,8 +217,11 @@ sub status {
 
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
   $opt->{$_} = 1 for qw<porcelain>;
+
   my @out = $self->_cmd(status => $opt, @_);
+
   my $statuses = Git::Wrapper::Statuses->new;
+
   return $statuses if !@out;
 
   for (@out) {
@@ -222,7 +261,7 @@ package Git::Wrapper::Log;
 sub new {
   my ($class, $id, %arg) = @_;
   return bless {
-    id => $id,
+    id   => $id,
     attr => {},
     %arg,
   } => $class;
@@ -246,12 +285,15 @@ sub new { return bless {} => shift }
 
 sub add {
   my ($self, $type, $mode, $from, $to) = @_;
+
   my $status = Git::Wrapper::Status->new($mode, $from, $to);
+
   push @{ $self->{ $type } }, $status;
 }
 
 sub get {
   my ($self, $type) = @_;
+
   return @{ defined $self->{$type} ? $self->{$type} : [] };
 }
 
@@ -284,6 +326,7 @@ my %modes = (
 
 sub new {
   my ($class, $mode, $from, $to) = @_;
+
   return bless {
     mode => $mode,
     from => $from,
@@ -413,14 +456,14 @@ Git::Wrapper:Statuses has two public methods. First, C<is_dirty>:
 
   my $dirty_flag = $statuses->is_dirty;
 
-Which returns a true/false value depending on whether the repository has any
+which returns a true/false value depending on whether the repository has any
 uncommitted changes.
 
 Second, C<get>:
 
   my @status = $statuses->get($group)
 
-Which returns an array of Git::Wrapper::Status objects, one per file changed.
+which returns an array of Git::Wrapper::Status objects, one per file changed.
 
 There are four status groups, each of which may contain zero or more changes.
 
