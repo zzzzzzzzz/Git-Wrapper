@@ -20,7 +20,7 @@ sub new {
 
 sub dir { shift->{dir} }
 
-my $GIT = 'git';
+my $GIT = $ENV{GIT_WRAPPER_GIT} // 'git';
 
 sub _opt {
   my $name = shift;
@@ -478,6 +478,11 @@ command in cmd/git.cmd.  If you use the msysGit version distributed with
 GitExtensions or an earlier version of msysGit, tests will fail during
 installation of this module.  You can get the latest version of msysGit on the
 Google Code project page: L<http://code.google.com/p/msysgit/downloads>
+
+=head1 ENVIRONMENT VARIABLES
+
+Git::Wrapper normally uses the first 'git' binary in your path, but if the
+GIT_WRAPPER_GIT environment variable is set, that value will be used instead.
 
 =head1 SEE ALSO
 
