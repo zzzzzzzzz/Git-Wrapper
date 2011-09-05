@@ -11,6 +11,7 @@ use IPC::Open3 () ;
 use Symbol;
 use File::pushd;
 use File::Temp;
+use Sort::Versions;
 
 sub new {
   my ($class, $arg, %opt) = @_;
@@ -152,6 +153,14 @@ sub log {
   }
 
   return @logs;
+}
+
+sub supports_log_raw_dates {
+  my $self = shift;
+
+  # The '--date=raw' option to 'git log' was added in version 1.6.2
+  return 0 if ( versioncmp( $self->version , '1.6.2' ) eq -1 );
+  return 1;
 }
 
 my %STATUS_CONFLICTS = map { $_ => 1 } qw<DD AU UD UA DU AA UU>;
@@ -363,6 +372,16 @@ of C<Git::Wrapper::Log> objects.  They have four methods:
 
 This method returns a true or false value indicating if there is a 'git'
 binary in the current $PATH.
+
+=head2 supports_log_raw_dates
+
+These methods return a true or false value (1 or 0) indicating whether the git
+binary being used has support for these options. (The '--porcelain' option on
+'git status' and the '--date=raw' option on 'git log', respectively.)
+
+These are primarily for use in this distribution's test suite, but may also be
+useful when writing code using Git::Wrapper that might be run with different
+versions of the underlying git binary.
 
 =head2 status
 
