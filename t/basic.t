@@ -88,7 +88,8 @@ SKIP: {
     };
 
     if ( $@ ){
-      skip substr($@,0,50), 1;
+      my $msg = substr($@,0,50);
+      skip $msg, 1;
     }
 
     @log = $git->log();
