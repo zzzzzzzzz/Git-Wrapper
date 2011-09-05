@@ -25,6 +25,9 @@ diag( "Testing git version: " . $git->version );
 
 $git->init;
 
+$git->config( 'user.name'  , 'Test User'        );
+$git->config( 'user.email' , 'test@example.com' );
+
 mkpath(File::Spec->catfile($dir, 'foo'));
 
 IO::File->new(">" . File::Spec->catfile($dir, qw(foo bar)))->print("hello\n");
