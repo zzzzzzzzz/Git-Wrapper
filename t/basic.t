@@ -14,6 +14,8 @@ my $dir = tempdir(CLEANUP => 1);
 
 my $git = Git::Wrapper->new($dir);
 
+diag( "Testing git version: " . $git->version );
+
 $git->init;
 
 mkpath(File::Spec->catfile($dir, 'foo'));
