@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.016     2011-09-05 20:24:49 America/New_York
+
+        Lots of tweaks to tests that will (hopefully) reduce some testing noise (John SJ Anderson)
+        Fix for multi-line commit messages on Win32 (Christian Walde)
+
 0.015     2011-07-16 10:15:15 America/New_York
 
         Added a fix that allows the 'clone' command to work (John SJ Anderson)
