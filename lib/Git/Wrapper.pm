@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 package Git::Wrapper;
-#ABSTRACT: wrap git(7) command-line interface
+#ABSTRACT: Wrap git(7) command-line interface
 
 our $DEBUG=0;
 
