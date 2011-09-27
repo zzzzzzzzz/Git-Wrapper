@@ -14,7 +14,7 @@ use IPC::Open3      qw();
 use Sort::Versions;
 use Symbol;
 
-my $GIT = $ENV{GIT_WRAPPER_GIT} // 'git';
+my $GIT = ( defined $ENV{GIT_WRAPPER_GIT} ) ? $ENV{GIT_WRAPPER_GIT} : 'git';
 
 sub new {
   my ($class, $arg, %opt) = @_;
