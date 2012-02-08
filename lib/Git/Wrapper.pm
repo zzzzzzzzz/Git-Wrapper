@@ -39,7 +39,7 @@ sub _opt {
   ;
 }
 
-sub _cmd {
+sub RUN {
   my $self = shift;
 
   my $cmd = shift;
@@ -71,7 +71,6 @@ sub _cmd {
 
   push @cmd, @_;
 
-  #print "running [@cmd]\n";
   my( @out , @err );
 
   {
@@ -92,7 +91,7 @@ sub _cmd {
     waitpid $pid, 0;
   };
 
-  #print "status: $?\n";
+  print "status: $?\n" if $DEBUG;
 
   if ($?) {
     die Git::Wrapper::Exception->new(
@@ -134,13 +133,13 @@ sub AUTOLOAD {
 
   $meth =~ tr/_/-/;
 
-  return $self->_cmd($meth, @_);
+  return $self->RUN($meth, @_);
 }
 
 sub version {
   my $self = shift;
 
-  my ($version) = $self->_cmd('version');
+  my ($version) = $self->RUN('version');
 
   $version =~ s/^git version //;
 
@@ -154,7 +153,7 @@ sub log {
   $opt->{no_color} = 1;
   $opt->{pretty}   = 'medium';
 
-  my @out = $self->_cmd(log => $opt, @_);
+  my @out = $self->RUN(log => $opt, @_);
 
   my @logs;
   while (my $line = shift @out) {
@@ -212,13 +211,13 @@ my %STATUS_CONFLICTS = map { $_ => 1 } qw<DD AU UD UA DU AA UU>;
 sub status {
   my $self = shift;
 
-  return $self->_cmd('status' , @_ )
+  return $self->RUN('status' , @_ )
     unless $self->supports_status_porcelain;
 
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
   $opt->{$_} = 1 for qw<porcelain>;
 
-  my @out = $self->_cmd(status => $opt, @_);
+  my @out = $self->RUN(status => $opt, @_);
 
   my $statuses = Git::Wrapper::Statuses->new;
 
@@ -560,6 +559,30 @@ See git-status man page for more details.
             print "\n";
         }
     }
+
+=head2 RUN
+
+This method bypasses the output rearranging performed by some of the wrapped
+methods described above (i.e., C<log>, C<status>, etc.). This can be useful
+in various situations, such as when you want to produce a particular log
+output format that isn't compatible with the way C<Git::Wrapper> constructs
+C<Git::Wrapper::Log>, or when you want raw C<git status> output that isn't
+parsed into a <Git::Wrapper::Status> object.
+
+This method should be called with an initial string argument of the C<git>
+subcommand you want to run, followed by a hashref containing options and their
+values, and then a list of any other arguments.
+
+=head3 Example
+
+    my $git = Git::Wrapper->new( '/path/to/git/repo' );
+
+    # the 'log' method returns Git::Wrapper::Log objects
+    my @log_objects = $git->log();
+
+    # while 'RUN('log')' returns an array of chomped lines
+    my @log_lines = $git->RUN('log');
+
 
 =head1 COMPATIBILITY
 
