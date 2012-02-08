@@ -71,7 +71,6 @@ sub _cmd {
 
   push @cmd, @_;
 
-  #print "running [@cmd]\n";
   my( @out , @err );
 
   {
@@ -92,7 +91,7 @@ sub _cmd {
     waitpid $pid, 0;
   };
 
-  #print "status: $?\n";
+  print "status: $?\n" if $DEBUG;
 
   if ($?) {
     die Git::Wrapper::Exception->new(
