@@ -9,6 +9,7 @@ use File::Spec;
 use File::Path qw(mkpath);
 use POSIX qw(strftime);
 use Test::Deep;
+use Test::Exception;
 
 unless ( Git::Wrapper->has_git_in_path ) {
   diag 'EXITING TESTS due to lack of installed git in $PATH.';
@@ -66,6 +67,7 @@ like($rev_list[0], qr/^[a-f\d]{40} FIRST$/);
 my $args = $git->supports_log_raw_dates ? { date => 'raw' } : {};
 my @log = $git->log( $args );
 is(@log, 1, 'one log entry');
+
 my $log = $log[0];
 is($log->id, (split /\s/, $rev_list[0])[0], 'id');
 is($log->message, "FIRST\n\n\tBODY\n", "message");
@@ -78,6 +80,12 @@ SKIP: {
   $log_date =~ s/ [+-]\d+$//;
   cmp_ok(( $log_date - $time ), '<=', 5, 'date');
 }
+
+throws_ok { $git->log('--oneline') } qr/^unhandled/ , 'log(--oneline) dies';
+
+my @lines;
+lives_ok { @lines = $git->RUN('log' , '--oneline' ) } 'RUN(log --oneline) lives';
+is( @lines , 1 , 'one log entry' );
 
 SKIP: {
     # Test empty commit message
