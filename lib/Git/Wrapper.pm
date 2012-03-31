@@ -253,9 +253,16 @@ package Git::Wrapper::Exception;
 sub new { my $class = shift; bless { @_ } => $class }
 
 use overload (
-  q("") => 'error',
+  q("") => '_stringify',
   fallback => 1,
 );
+
+sub _stringify {
+  my ($self) = @_;
+  my $error = $self->error;
+  return $error if $error =~ /\S/;
+  return "git exited non-zero but had no output to stderr";
+}
 
 sub output { join "", map { "$_\n" } @{ shift->{output} } }
 sub error  { join "", map { "$_\n" } @{ shift->{error} } }
