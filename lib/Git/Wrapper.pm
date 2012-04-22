@@ -379,6 +379,12 @@ arguments are passed as ordinary command arguments.
 
   $git->checkout("mybranch");
 
+I<N.b.> Because of the way arguments are parsed, should you need to pass an
+explicit '0' value to an option (for example, to have the same effect as
+C<--abrrev=0> on the command line), you should pass it with a leading space, like so:
+
+  $git->describe({ abbrev => ' 0' };
+
 Output is available as an array of lines, each chomped.
 
   @sha1s_and_titles = $git->rev_list({ all => 1, pretty => 'oneline' });

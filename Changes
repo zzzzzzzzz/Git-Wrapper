@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+        Update documentation to demonstrate how to pass '0' to an option (RT#58787)
         Make git-wrapper a bit friendlier on old gits (Ricardo Signes)
 
 0.017     2011-09-27 14:35:19 America/New_York
