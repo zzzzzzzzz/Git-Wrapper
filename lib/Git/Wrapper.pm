@@ -30,6 +30,9 @@ sub has_git_in_path { can_run('git') }
 
 sub dir { shift->{dir} }
 
+sub ERR { shift->{err} }
+sub OUT { shift->{out} }
+
 sub _opt {
   my $name = shift;
   $name =~ tr/_/-/;
@@ -41,6 +44,9 @@ sub _opt {
 
 sub RUN {
   my $self = shift;
+
+  delete $self->{err};
+  delete $self->{out};
 
   my $cmd = shift;
 
@@ -107,7 +113,12 @@ sub RUN {
     );
   }
 
+  chomp(@err);
+  $self->{err} = \@err;
+
   chomp(@out);
+  $self->{out} = \@out;
+
   return @out;
 }
 
@@ -610,6 +621,22 @@ values, and then a list of any other arguments.
     # while 'RUN('log')' returns an array of chomped lines
     my @log_lines = $git->RUN('log');
 
+=head2 ERR
+
+After a command has been run, this method will return anything that was sent
+to C<STDERR>, in the form of an array of chomped lines. This information will
+be cleared as soon as a new command is executed. This method should B<*NOT*>
+be used as a success/failure check, as C<git> will sometimes produce output on
+STDERR when a command is successful.
+
+=head2 OUT
+
+After a command has been run, this method will return anything that was sent
+to C<STDOUT>, in the form of an array of chomped lines. It is identical to
+what is returned from the method call that runs the command, and is provided
+simply for symmetry with the C<ERR> method. This method should B<*NOT*> be
+used as a success/failure check, as C<git> will frequently not have any output
+with a successful command.
 
 =head1 COMPATIBILITY
 
