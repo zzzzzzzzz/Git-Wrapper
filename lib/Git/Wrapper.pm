@@ -657,13 +657,19 @@ GIT_WRAPPER_GIT environment variable is set, that value will be used instead.
 L<VCI::VCS::Git> is the git implementation for L<VCI>, a generic interface to
 version-controle systems.
 
+L<Other Perl Git Wrappers|https://metacpan.org/module/Git::Repository#OTHER-PERL-GIT-WRAPPERS>
+is a list of other Git interfaces in Perl. If L<Git::Wrapper> doesn't scratch
+your itch, possibly one of the modules listed there will.
+
 Git itself is at L<http://git.or.cz>.
 
-=head1 BUGS
+=head1 REPORTING BUGS & OTHER WAYS TO CONTRIBUTE
 
-Please report any bugs or feature requests to
-C<bug-git-wrapper@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org>.  I will be notified, and then you'll automatically be
-notified of progress on your bug as I make changes.
+The code for this module is maintained on GitHub, at
+L<https://github.com/genehack/Git-Wrapper>. If you have a patch, feel free to
+fork the repository and submit a pull request. If you find a bug, please open
+an issue on the project at GitHub. (We also watch the L<http://rt.cpan.org>
+queue for Git::Wrapper, so feel free to use that bug reporting system if you
+prefer)
 
 =cut
