@@ -105,4 +105,33 @@ SKIP: {
 };
 
 
+# test --message vs. -m
+my @arg_tests = (
+    ['message', 'long_arg_no_spaces',   'long arg, no spaces in val',  ],
+    ['message', 'long arg with spaces', 'long arg, spaces in val',     ],
+    ['m',       'short_arg_no_spaces',  'short arg, no spaces in val', ],
+    ['m',       'short arg w spaces',   'short arg, spaces in val',    ],
+);
+
+my $arg_file = IO::File->new('>' . File::Spec->catfile($dir, qw(argument_testfile)));
+
+for my $arg_test (@arg_tests) {
+    my ($flag, $msg, $descr) = @$arg_test;
+
+    $arg_file->print("$msg\n");
+    $git->add('argument_testfile');
+    $git->commit({ $flag => $msg });
+
+    my ($arg_log) = $git->log('-n 1');
+
+    is $arg_log->message, "$msg\n", "argument test: $descr";
+}
+
+$git->checkout({b => 'new_branch'});
+
+my ($new_branch) = grep {m/^\*/} $git->branch;
+$new_branch =~ s/^\*\s+|\s+$//g;
+
+is $new_branch, 'new_branch', 'new branch name is correct';
+
 done_testing();

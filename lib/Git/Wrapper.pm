@@ -54,7 +54,7 @@ sub RUN {
     my $val = delete $opt->{$_};
     next if $val eq '0';
 
-    push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
+    push @cmd, _opt($name) . _munge_val($name, $val);
   }
 
   push @cmd, $cmd;
@@ -66,7 +66,7 @@ sub RUN {
     ( $name, $val ) = $self->_message_tempfile( $val )
       if $self->_win32_multiline_commit_msg( $cmd, $name, $val );
 
-    push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
+    push @cmd,  _opt($name) . _munge_val($name, $val);
   }
 
   push @cmd, @_;
@@ -109,6 +109,14 @@ sub RUN {
 
   chomp(@out);
   return @out;
+}
+
+sub _munge_val {
+  my( $name , $val ) = @_;
+
+  return $val eq '1'       ? ""
+    : length($name) == 1 ? $val
+    :                      "=$val";
 }
 
 sub _win32_multiline_commit_msg {

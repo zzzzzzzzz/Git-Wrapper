@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+        Generate proper calls for single letter options that take values (RT#75955, Fitz Elliott)
         Update documentation to demonstrate how to pass '0' to an option (RT#58787)
         Make git-wrapper a bit friendlier on old gits (Ricardo Signes)
 
