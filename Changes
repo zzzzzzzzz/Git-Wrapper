@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.018     2012-04-22 15:30:43 America/New_York
+
         Misc doc clean ups and tweaks (John SJ Anderson)
         Add ERR and OUT methods to provide direct access to STDERR and STDOUT, respectively
           (attempt to address RT#71632, John SJ Anderson)
