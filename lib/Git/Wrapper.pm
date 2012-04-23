@@ -30,6 +30,9 @@ sub has_git_in_path { can_run('git') }
 
 sub dir { shift->{dir} }
 
+sub ERR { shift->{err} }
+sub OUT { shift->{out} }
+
 sub _opt {
   my $name = shift;
   $name =~ tr/_/-/;
@@ -41,6 +44,9 @@ sub _opt {
 
 sub RUN {
   my $self = shift;
+
+  delete $self->{err};
+  delete $self->{out};
 
   my $cmd = shift;
 
@@ -54,7 +60,7 @@ sub RUN {
     my $val = delete $opt->{$_};
     next if $val eq '0';
 
-    push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
+    push @cmd, _opt($name) . _munge_val($name, $val);
   }
 
   push @cmd, $cmd;
@@ -66,7 +72,7 @@ sub RUN {
     ( $name, $val ) = $self->_message_tempfile( $val )
       if $self->_win32_multiline_commit_msg( $cmd, $name, $val );
 
-    push @cmd, _opt($name) . ($val eq '1' ? "" : "=$val");
+    push @cmd,  _opt($name) . _munge_val($name, $val);
   }
 
   push @cmd, @_;
@@ -107,8 +113,21 @@ sub RUN {
     );
   }
 
+  chomp(@err);
+  $self->{err} = \@err;
+
   chomp(@out);
+  $self->{out} = \@out;
+
   return @out;
+}
+
+sub _munge_val {
+  my( $name , $val ) = @_;
+
+  return $val eq '1'       ? ""
+    : length($name) == 1 ? $val
+    :                      "=$val";
 }
 
 sub _win32_multiline_commit_msg {
@@ -379,6 +398,12 @@ arguments are passed as ordinary command arguments.
 
   $git->checkout("mybranch");
 
+I<N.b.> Because of the way arguments are parsed, should you need to pass an
+explicit '0' value to an option (for example, to have the same effect as
+C<--abrrev=0> on the command line), you should pass it with a leading space, like so:
+
+  $git->describe({ abbrev => ' 0' };
+
 Output is available as an array of lines, each chomped.
 
   @sha1s_and_titles = $git->rev_list({ all => 1, pretty => 'oneline' });
@@ -596,6 +621,22 @@ values, and then a list of any other arguments.
     # while 'RUN('log')' returns an array of chomped lines
     my @log_lines = $git->RUN('log');
 
+=head2 ERR
+
+After a command has been run, this method will return anything that was sent
+to C<STDERR>, in the form of an array of chomped lines. This information will
+be cleared as soon as a new command is executed. This method should B<*NOT*>
+be used as a success/failure check, as C<git> will sometimes produce output on
+STDERR when a command is successful.
+
+=head2 OUT
+
+After a command has been run, this method will return anything that was sent
+to C<STDOUT>, in the form of an array of chomped lines. It is identical to
+what is returned from the method call that runs the command, and is provided
+simply for symmetry with the C<ERR> method. This method should B<*NOT*> be
+used as a success/failure check, as C<git> will frequently not have any output
+with a successful command.
 
 =head1 COMPATIBILITY
 
@@ -616,13 +657,19 @@ GIT_WRAPPER_GIT environment variable is set, that value will be used instead.
 L<VCI::VCS::Git> is the git implementation for L<VCI>, a generic interface to
 version-controle systems.
 
+L<Other Perl Git Wrappers|https://metacpan.org/module/Git::Repository#OTHER-PERL-GIT-WRAPPERS>
+is a list of other Git interfaces in Perl. If L<Git::Wrapper> doesn't scratch
+your itch, possibly one of the modules listed there will.
+
 Git itself is at L<http://git.or.cz>.
 
-=head1 BUGS
+=head1 REPORTING BUGS & OTHER WAYS TO CONTRIBUTE
 
-Please report any bugs or feature requests to
-C<bug-git-wrapper@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org>.  I will be notified, and then you'll automatically be
-notified of progress on your bug as I make changes.
+The code for this module is maintained on GitHub, at
+L<https://github.com/genehack/Git-Wrapper>. If you have a patch, feel free to
+fork the repository and submit a pull request. If you find a bug, please open
+an issue on the project at GitHub. (We also watch the L<http://rt.cpan.org>
+queue for Git::Wrapper, so feel free to use that bug reporting system if you
+prefer)
 
 =cut
