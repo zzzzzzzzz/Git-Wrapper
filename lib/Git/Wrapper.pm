@@ -17,6 +17,7 @@ use Symbol;
 use Git::Wrapper::Exception;
 use Git::Wrapper::Log;
 use Git::Wrapper::Statuses;
+use Git::Wrapper::File::RawModification;
 
 my $GIT = ( defined $ENV{GIT_WRAPPER_GIT} ) ? $ENV{GIT_WRAPPER_GIT} : 'git';
 
@@ -182,6 +183,8 @@ sub log {
   $opt->{no_color} = 1;
   $opt->{pretty}   = 'medium';
 
+  my $raw = defined $opt->{raw} && $opt->{raw};
+
   my @out = $self->RUN(log => $opt, @_);
 
   my @logs;
@@ -212,6 +215,16 @@ sub log {
     }
 
     $current->message($message);
+
+    if ($raw) {
+      my @modifications;
+
+      while(@out and $out[0] =~ m/^\:(\d{6}) (\d{6}) (\w{7})\.\.\. (\w{7})\.\.\. (\w{1})\t(.*)$/) {
+        push @modifications, Git::Wrapper::File::RawModification->new($6,$5,$1,$2,$3,$4);
+        shift @out;
+      }
+      $current->modifications(@modifications) if @modifications;
+    }
 
     push @logs, $current;
   }
