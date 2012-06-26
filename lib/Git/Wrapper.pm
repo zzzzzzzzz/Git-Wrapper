@@ -14,6 +14,10 @@ use IPC::Open3      qw();
 use Sort::Versions;
 use Symbol;
 
+use Git::Wrapper::Exception;
+use Git::Wrapper::Log;
+use Git::Wrapper::Statuses;
+
 my $GIT = ( defined $ENV{GIT_WRAPPER_GIT} ) ? $ENV{GIT_WRAPPER_GIT} : 'git';
 
 sub new {
@@ -266,110 +270,6 @@ sub status {
   }
   return $statuses;
 }
-
-package Git::Wrapper::Exception;
-
-sub new { my $class = shift; bless { @_ } => $class }
-
-use overload (
-  q("") => '_stringify',
-  fallback => 1,
-);
-
-sub _stringify {
-  my ($self) = @_;
-  my $error = $self->error;
-  return $error if $error =~ /\S/;
-  return "git exited non-zero but had no output to stderr";
-}
-
-sub output { join "", map { "$_\n" } @{ shift->{output} } }
-sub error  { join "", map { "$_\n" } @{ shift->{error} } }
-sub status { shift->{status} }
-
-package Git::Wrapper::Log;
-
-sub new {
-  my ($class, $id, %arg) = @_;
-  return bless {
-    id   => $id,
-    attr => {},
-    %arg,
-  } => $class;
-}
-
-sub id { shift->{id} }
-
-sub attr { shift->{attr} }
-
-sub message { @_ > 1 ? ($_[0]->{message} = $_[1]) : $_[0]->{message} }
-
-sub date { shift->attr->{date} }
-
-sub author { shift->attr->{author} }
-
-1;
-
-package Git::Wrapper::Statuses;
-
-sub new { return bless {} => shift }
-
-sub add {
-  my ($self, $type, $mode, $from, $to) = @_;
-
-  my $status = Git::Wrapper::Status->new($mode, $from, $to);
-
-  push @{ $self->{ $type } }, $status;
-}
-
-sub get {
-  my ($self, $type) = @_;
-
-  return @{ defined $self->{$type} ? $self->{$type} : [] };
-}
-
-sub is_dirty {
-  my( $self ) = @_;
-
-  return keys %$self ? 1 : 0;
-}
-
-1;
-
-package Git::Wrapper::Status;
-
-my %modes = (
-  M   => 'modified',
-  A   => 'added',
-  D   => 'deleted',
-  R   => 'renamed',
-  C   => 'copied',
-  U   => 'conflict',
-  '?' => 'unknown',
-  DD  => 'both deleted',
-  AA  => 'both added',
-  UU  => 'both modified',
-  AU  => 'added by us',
-  DU  => 'deleted by us',
-  UA  => 'added by them',
-  UD  => 'deleted by them',
-);
-
-sub new {
-  my ($class, $mode, $from, $to) = @_;
-
-  return bless {
-    mode => $mode,
-    from => $from,
-    to   => $to,
-  } => $class;
-}
-
-sub mode { $modes{ shift->{mode} } }
-
-sub from { shift->{from} }
-
-sub to   { defined( $_[0]->{to} ) ? $_[0]->{to} : '' }
 
 __END__
 
