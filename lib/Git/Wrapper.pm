@@ -59,6 +59,8 @@ sub RUN {
 
   my @cmd = $GIT;
 
+  my $stdin = delete $opt->{-STDIN};
+
   for (grep { /^-/ } keys %$opt) {
     (my $name = $_) =~ s/^-//;
 
@@ -89,11 +91,24 @@ sub RUN {
 
     my ($wtr, $rdr, $err);
 
+    local *TEMP;
+    if ($^O eq 'MSWin32' && defined $stdin) {
+        my $file = File::Temp->new;
+        $file->autoflush(1);
+        $file->print($stdin);
+        $file->seek(0,0);
+        open TEMP, '<&=', $file;
+        $wtr = '<&TEMP';
+        undef $stdin;
+    }
+
     $err = Symbol::gensym;
 
     print STDERR join(' ',@cmd),"\n" if $DEBUG;
 
     my $pid = IPC::Open3::open3($wtr, $rdr, $err, @cmd);
+    print $wtr $stdin
+      if defined $stdin;
 
     close $wtr;
     chomp(@out = <$rdr>);
@@ -316,6 +331,10 @@ explicit '0' value to an option (for example, to have the same effect as
 C<--abrrev=0> on the command line), you should pass it with a leading space, like so:
 
   $git->describe({ abbrev => ' 0' };
+
+To pass content via STDIN, use the -STDIN option:
+
+  $git->hash_object({ stdin => 1, -STDIN => 'content to hash' });
 
 Output is available as an array of lines, each chomped.
 
