@@ -15,9 +15,9 @@ use Sort::Versions;
 use Symbol;
 
 use Git::Wrapper::Exception;
+use Git::Wrapper::File::RawModification;
 use Git::Wrapper::Log;
 use Git::Wrapper::Statuses;
-use Git::Wrapper::File::RawModification;
 
 my $GIT = ( defined $ENV{GIT_WRAPPER_GIT} ) ? $ENV{GIT_WRAPPER_GIT} : 'git';
 
@@ -93,13 +93,13 @@ sub RUN {
 
     local *TEMP;
     if ($^O eq 'MSWin32' && defined $stdin) {
-        my $file = File::Temp->new;
-        $file->autoflush(1);
-        $file->print($stdin);
-        $file->seek(0,0);
-        open TEMP, '<&=', $file;
-        $wtr = '<&TEMP';
-        undef $stdin;
+      my $file = File::Temp->new;
+      $file->autoflush(1);
+      $file->print($stdin);
+      $file->seek(0,0);
+      open TEMP, '<&=', $file;
+      $wtr = '<&TEMP';
+      undef $stdin;
     }
 
     $err = Symbol::gensym;

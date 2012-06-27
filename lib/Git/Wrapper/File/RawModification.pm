@@ -8,23 +8,23 @@ use warnings;
 sub new {
   my ($class, $filename, $type, $perms_from, $perms_to, $blob_from, $blob_to) = @_;
   return bless {
-    filename => $filename,
-    type => $type,
+    filename   => $filename,
+    type       => $type,
     perms_from => $perms_from,
-    perms_to => $perms_to,
-    blob_from => $blob_from,
-    blob_to => $blob_to,
+    perms_to   => $perms_to,
+    blob_from  => $blob_from,
+    blob_to    => $blob_to,
   } => $class;
 }
 
-sub filename { shift->{filename} }
-sub type { shift->{type} }
+sub filename   { shift->{filename} }
+sub type       { shift->{type} }
 
 sub perms_from { shift->{perms_from} }
-sub perms_to { shift->{perms_to} }
+sub perms_to   { shift->{perms_to} }
 
-sub blob_from { shift->{blob_from} }
-sub blob_to { shift->{blob_to} }
+sub blob_from  { shift->{blob_from} }
+sub blob_to    { shift->{blob_to} }
 
 1;
 

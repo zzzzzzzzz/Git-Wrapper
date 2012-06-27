@@ -1,3 +1,7 @@
+use 5.006;
+use strict;
+use warnings;
+
 package Git::Wrapper::Status;
 # ABSTRACT: A specific status information in the Git
 

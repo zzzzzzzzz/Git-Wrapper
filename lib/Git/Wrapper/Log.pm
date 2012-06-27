@@ -9,25 +9,23 @@ sub new {
   my ($class, $id, %arg) = @_;
   my $modifications = defined $arg{modifications} ? $arg{modifications} : [];
   return bless {
-    id   => $id,
-    attr => {},
+    id            => $id,
+    attr          => {},
     modifications => [],
     %arg,
   } => $class;
 }
 
-sub id { shift->{id} }
-
+sub id   { shift->{id} }
 sub attr { shift->{attr} }
 
 sub modifications {
-	my $self = shift;
-	if (@_ > 0) {
-		$self->{modifications} = [@_];
-		return scalar @{$self->{modifications}};
-	} else {
-		return @{$self->{modifications}};
-	}
+  my $self = shift;
+  if (@_ > 0) {
+    $self->{modifications} = [@_];
+    return scalar @{$self->{modifications}};
+  }
+  else { return @{$self->{modifications}} }
 }
 
 sub message { @_ > 1 ? ($_[0]->{message} = $_[1]) : $_[0]->{message} }
