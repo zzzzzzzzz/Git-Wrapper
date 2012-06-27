@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.021     2012-06-27 16:48:42 America/New_York
         Splitted up classes inside Git::Wrapper to individual package files (Torsten Raudssus)
         Added the handling of ->log({ raw => 1 }) to get the file modifications (Torsten Raudssus)
         add -STDIN option for passing content via STDIN (Graham Knop)
