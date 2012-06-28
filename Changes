@@ -7,6 +7,9 @@ Revision history for {{$dist->name}}
         Unset GIT_PAGER_IN_USE env var to stop any ANSI colorization (Karen Etheridge)
         Skip hash test on git versions before 1.6.1 (Eduardo Ariño de la Rubia)
 
+        Add explicit external dep on 'git' in $PATH; remove test code
+        that bailed when 'git' wasn't in $PATH (JSJA)
+
 0.021     2012-06-27 16:48:42 America/New_York
         Splitted up classes inside Git::Wrapper to individual package files (Torsten Raudssus)
         Added the handling of ->log({ raw => 1 }) to get the file modifications (Torsten Raudssus)
