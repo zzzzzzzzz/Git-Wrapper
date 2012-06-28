@@ -7,6 +7,8 @@ Revision history for {{$dist->name}}
         Add explicit external dep on 'git' in $PATH; remove test code
         that bailed when 'git' wasn't in $PATH (JSJA)
 
+        Remove t/pod* in favor of dzil plugin POD coverage/syntax tests (JSJA)
+
 0.022     2012-06-27 17:00:46 America/New_York
 
         Unset GIT_PAGER_IN_USE env var to stop any ANSI colorization (Karen Etheridge)
