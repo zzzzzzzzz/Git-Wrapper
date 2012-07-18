@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+        Add 'fatal' option for RequiresExternal dzil plugin
+
 0.024     2012-07-18 12:32:17 America/New_York
 
         make sure no line ending munging is done to get consistent
