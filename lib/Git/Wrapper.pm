@@ -9,7 +9,7 @@ our $DEBUG=0;
 
 # Prevent ANSI color with extreme prejudice
 # https://github.com/genehack/Git-Wrapper/issues/13
-$ENV{GIT_PAGER_IN_USE} = undef;
+delete $ENV{GIT_PAGER_IN_USE};
 
 use File::pushd;
 use File::Temp;
@@ -199,8 +199,9 @@ sub log {
   my $self = shift;
 
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
-  $opt->{no_color} = 1;
-  $opt->{pretty}   = 'medium';
+  $opt->{no_color}         = 1;
+  $opt->{pretty}           = 'medium';
+  $opt->{no_abbrev_commit} = 1;
 
   my $raw = defined $opt->{raw} && $opt->{raw};
 
