@@ -1,5 +1,5 @@
 package Git::Wrapper::Statuses;
-# ABSTRACT: 
+# ABSTRACT: Multiple git statuses information
 
 use 5.006;
 use strict;
