@@ -210,7 +210,9 @@ sub log {
   my $opt  = ref $_[0] eq 'HASH' ? shift : {};
   $opt->{no_color}         = 1;
   $opt->{pretty}           = 'medium';
-  $opt->{no_abbrev_commit} = 1;
+
+  $opt->{no_abbrev_commit} = 1
+    if $self->supports_log_no_abbrev_commit;
 
   my $raw = defined $opt->{raw} && $opt->{raw};
 
@@ -267,6 +269,13 @@ sub supports_hash_object_filters {
   # The '--no-filters' option to 'git-hash-object' was added in version 1.6.1
   return 0 if ( versioncmp( $self->version , '1.6.1' ) eq -1 );
   return 1;
+}
+
+sub supports_log_no_abbrev_commit {
+  my $self = shift;
+
+  # The '--no-abbrev-commit' option to 'git log' was added in version 1.7.6
+  return ( versioncmp( $self->version , '1.7.6' ) eq -1 ) ? 0 : 1;
 }
 
 sub supports_log_raw_dates {
